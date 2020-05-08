@@ -92,8 +92,10 @@ class HelloCommand extends Command
 }
 ```
 
-This framework has some commands:
+## Inbuilt commands
+
 - *Deps* : Is an in-built command to see if your system respect all the dependencies to run this framework.
+- *Hello* : Is a command only for *local* environment (that can be deleted) only for demo purposes.
 - *Example* : Is a command only for *local* environment (that can be deleted) only for demo purposes.
 
 ## Run Commands
@@ -195,7 +197,7 @@ Logging is always enabled and you can see all the output in `/storage/logs/app-[
 
 ## Benchmarks for Hello Command
 
-Some number...
+Some numbers...
 
 **Machine:**<br/>
 Intel® Core™ i5-8400 CPU @ 2.80GHz × 6<br>
