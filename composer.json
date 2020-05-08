@@ -1,0 +1,41 @@
+{
+    "name": "ricardoper/micra",
+    "type": "library",
+    "license": "MIT",
+    "description": "CLI framework for your apps with a minimum overhead based on Symfony Components",
+    "keywords": [
+        "PHP",
+        "CLI",
+        "Framework",
+        "App",
+        "Light"
+    ],
+    "homepage": "https://github.com/ricardoper",
+    "authors": [
+        {
+            "name": "Ricardo Pereira",
+            "email": "github@ricardopereira.es",
+            "homepage": "http://ricardopereira.es"
+        }
+    ],
+    "require": {
+        "php": "^7.2.5",
+        "psr/log": "^1.1",
+        "pimple/pimple": "^3.3",
+        "symfony/console": "^5.0",
+        "symfony/error-handler": "^5.0",
+        "vlucas/phpdotenv": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+          "app/Kernel/Helpers/helpers.php",
+          "app/Kernel/Helpers/arrayHelpers.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
