@@ -7,12 +7,7 @@ use App\Kernel\Exceptions\KernelException;
 use App\Kernel\Interfaces\ServiceProviderInterface;
 use App\Kernel\Services\Configs\Configs;
 use Pimple\Container;
-use Psr\Log\LogLevel;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\ErrorHandler\ErrorHandler;
-use Throwable;
 
 class App extends Application
 {
@@ -37,49 +32,6 @@ class App extends Application
      * @var Container
      */
     protected $container = null;
-
-
-    /**
-     * Ignore Exceptions List
-     *
-     * @var string[]
-     */
-    protected $ignoreExceptions = [
-        CommandNotFoundException::class,
-    ];
-
-    /**
-     * Ignore Exceptions Files
-     *
-     * @var string[]
-     */
-    protected $ignoreExceptionsFiles = [
-        'Input/ArgvInput.php',
-    ];
-
-
-    /**
-     * Error Levels
-     *
-     * @var array
-     */
-    private $errorLevels = [
-        E_DEPRECATED => LogLevel::INFO,
-        E_USER_DEPRECATED => LogLevel::INFO,
-        E_NOTICE => LogLevel::WARNING,
-        E_USER_NOTICE => LogLevel::WARNING,
-        E_STRICT => LogLevel::WARNING,
-        E_WARNING => LogLevel::WARNING,
-        E_USER_WARNING => LogLevel::WARNING,
-        E_COMPILE_WARNING => LogLevel::WARNING,
-        E_CORE_WARNING => LogLevel::WARNING,
-        E_USER_ERROR => LogLevel::CRITICAL,
-        E_RECOVERABLE_ERROR => LogLevel::CRITICAL,
-        E_COMPILE_ERROR => LogLevel::CRITICAL,
-        E_PARSE => LogLevel::CRITICAL,
-        E_ERROR => LogLevel::CRITICAL,
-        E_CORE_ERROR => LogLevel::CRITICAL,
-    ];
 
 
     /**
@@ -162,27 +114,6 @@ class App extends Application
         return $this->env;
     }
 
-    /**
-     * Render Errors in Console
-     *
-     * @param Throwable $e
-     * @param OutputInterface $output
-     */
-    public function renderThrowable(Throwable $e, OutputInterface $output): void
-    {
-        $ignoreException = (in_array(get_class($e), $this->ignoreExceptions) === false);
-
-        $ignoreExcepFile = (in_array($this->getFileLevels($e->getFile()), $this->ignoreExceptionsFiles) === false);
-
-        if ($ignoreException === true && $ignoreExcepFile === true) {
-            $level = $this->getErrorLevel($e);
-
-            $this->container['logger']->log($level, $e->getMessage(), $e ? ['exception' => $e] : []);
-        }
-
-        parent::renderThrowable($e, $output);
-    }
-
 
     /**
      * Set Container
@@ -230,8 +161,21 @@ class App extends Application
      */
     protected function setExceptionBehaviour()
     {
-        $handler = ErrorHandler::register();
-        $handler->setDefaultLogger($this->container['logger']);
+        $this->setCatchExceptions(false);
+
+        $configs = $this->container['configs']->get('handlers');
+
+
+        $errorHandler = new $configs['errorHandler']();
+
+        set_error_handler([$errorHandler, 'handleError']);
+
+        set_exception_handler([$errorHandler, 'handleException']);
+
+
+        $shutdownHandler = new $configs['shutdownHandler']();
+
+        register_shutdown_function([$shutdownHandler, 'handleShutdown']);
     }
 
     /**
@@ -278,42 +222,6 @@ class App extends Application
 
                 $this->add(new $command);
             }
-        }
-    }
-
-
-    /**
-     * Get FileLevels
-     *
-     * @param string $file
-     * @param int $levels
-     * @return string
-     */
-    private function getFileLevels(string $file, int $levels = 2): string
-    {
-        $file = explode('/', $file);
-
-        $file = array_slice($file, -$levels);
-
-        return implode('/', $file);
-    }
-
-    /**
-     * Get Error Level
-     *
-     * @param Throwable $e
-     * @return string
-     */
-    private function getErrorLevel(Throwable $e): string
-    {
-        try {
-            $levelEx = explode(':', $e->getMessage());
-
-            $level = constant('E_' . strtoupper($levelEx[0]));
-
-            return $this->errorLevels[$level] ?? LogLevel::DEBUG;
-        } catch (Throwable $ex) {
-            return LogLevel::DEBUG;
         }
     }
 }
