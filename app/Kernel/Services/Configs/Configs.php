@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Kernel\Services\Configs;
 
+use DirectoryIterator;
 use Pimple\Container;
-use Symfony\Component\Finder\Finder;
 
 class Configs
 {
@@ -123,7 +123,7 @@ class Configs
         }
 
         foreach ($paths as $path) {
-            foreach (new \DirectoryIterator($path) as $file) {
+            foreach (new DirectoryIterator($path) as $file) {
                 // Exclude files started by _ //
                 if ($file->isDir() || $file->getExtension() !== 'php' || $file->getFilename()[0] === '_') {
                     continue;

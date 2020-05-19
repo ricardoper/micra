@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Kernel;
 
 use App\Kernel\Exceptions\KernelException;
+use App\Kernel\Interfaces\ServiceProviderInterface;
 use App\Kernel\Services\Configs\Configs;
 use Pimple\Container;
 use Psr\Log\LogLevel;
@@ -28,7 +29,7 @@ class App extends Application
      *
      * @var string
      */
-    protected $env = 'production';
+    protected $env = 'prod';
 
     /**
      * Container

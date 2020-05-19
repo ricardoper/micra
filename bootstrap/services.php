@@ -7,6 +7,7 @@ use App\Kernel\Services\Configs\ConfigsServiceProvider;
 return [
 
     ConfigsServiceProvider::class,
+
     LoggerServiceProvider::class,
 
 ];

@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services\Example;
 
-use App\Kernel\ServiceProviderInterface;
-use Closure;
+use App\Kernel\Interfaces\ServiceProviderInterface;
 use Pimple\Container;
 
 class ExampleServiceProvider implements ServiceProviderInterface
@@ -22,9 +21,9 @@ class ExampleServiceProvider implements ServiceProviderInterface
      * Register new service on dependency container
      *
      * @param Container $container
-     * @return Closure
+     * @return mixed
      */
-    public function register(Container $container): Closure
+    public function register(Container $container)
     {
         return function (Container $container) {
             unset($container);

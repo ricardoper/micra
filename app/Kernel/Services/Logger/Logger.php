@@ -6,8 +6,8 @@ namespace App\Kernel\Services\Logger;
 use App\Kernel\Services\Logger\Handlers\HandlerInterface;
 use App\Kernel\Services\Logger\Handlers\RotatingFileHandler;
 use DateTime;
-use DateTimeZone;
 use Exception;
+use Pimple\Container;
 use Psr\Log\AbstractLogger;
 
 class Logger extends AbstractLogger
@@ -43,26 +43,21 @@ class Logger extends AbstractLogger
         'EMERGENCY' => 600,
     ];
 
-    /**
-     * Keep a track of the count of logged messages
-     *
-     * @var int
-     */
-    protected $handledLogCount = 0;
-
 
     /**
      * Logger constructor
      *
-     * @param $channel
+     * Logger constructor.
+     * @param Container $container
+     * @throws Exception
      */
-    public function __construct($channel)
+    public function __construct(Container $container)
     {
-        $this->channel = $channel;
+        $configs = $container['configs']->get('logger');
 
-        $logFile = storage_path('logs/app.log');
+        $this->channel = $configs['name'];
 
-        $this->pushHandler(new RotatingFileHandler($logFile, 7));
+        $this->pushHandler(new RotatingFileHandler($configs['path'], $configs['maxFiles']));
     }
 
     /**
@@ -130,16 +125,6 @@ class Logger extends AbstractLogger
         $this->addRecord($level, $message, $context);
     }
 
-    /**
-     * Get the count of handled logs
-     *
-     * @return int
-     */
-    public function getHandledLogsCount(): int
-    {
-        return $this->handledLogCount;
-    }
-
 
     /**
      * Adds a log record
@@ -161,8 +146,6 @@ class Logger extends AbstractLogger
             'channel' => (string)$this->channel,
             'recorded' => $time->format(DATE_ISO8601),
         ];
-
-        $this->handledLogCount += 1;
 
         foreach ($this->handlers as $handler) {
             $handler->handle($record);

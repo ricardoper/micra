@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Kernel\Services\Logger;
 
-use App\Kernel\ServiceProviderInterface;
-use Closure;
+use App\Kernel\Interfaces\ServiceProviderInterface;
 use Pimple\Container;
 
 class LoggerServiceProvider implements ServiceProviderInterface
@@ -22,12 +21,12 @@ class LoggerServiceProvider implements ServiceProviderInterface
      * Register new service on dependency container
      *
      * @param Container $container
-     * @return Closure
+     * @return mixed
      */
-    public function register(Container $container): Closure
+    public function register(Container $container)
     {
-        return function ($container) {
-            return new Logger($container['configs']->get('app.name'));
+        return function (Container $container) {
+            return new Logger($container);
         };
     }
 }

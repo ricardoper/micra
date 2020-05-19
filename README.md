@@ -170,9 +170,9 @@ You can add as many *Models* as you want in a cleaning way (`/app/Models`).
 You can organize this models as you like.
 
 ```php
-use App\Models\Model;
+use App\Models\ModelAbstract;
 
-class User extends Model
+class User extends ModelAbstract
 {
 
     // Code Logic

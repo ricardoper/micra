@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-use App\Services\Example\ExampleServiceProvider;
-
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | Autoloaded Service Providers
+    | Logger
     |--------------------------------------------------------------------------
     */
-    // ExampleServiceProvider::class,
+    'name' => 'app',
+    'maxFiles' => 7,
+    'path' => env('LOG_TO_OUTPUT', false) === true ? 'php://stdout' : storage_path('logs/app.log'),
 
 ];

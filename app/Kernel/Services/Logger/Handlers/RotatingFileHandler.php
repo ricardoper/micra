@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Kernel\Services\Logger\Handlers;
 
 use DateTime;
-use DateTimeZone;
 use Exception;
 
 /**
@@ -27,13 +26,6 @@ class RotatingFileHandler implements HandlerInterface
     protected $maxFiles = 0;
 
     /**
-     * Log filename
-     *
-     * @var string
-     */
-    protected $filename;
-
-    /**
      * File date format
      *
      * @var string
@@ -45,20 +37,37 @@ class RotatingFileHandler implements HandlerInterface
      *
      * @var string
      */
-    protected $filenameFormat = '{filename}-{date}';
+    protected $filenameFormat = '{filename}-{date}.log';
+
+    /**
+     * Log filename
+     *
+     * @var string
+     */
+    protected $filename;
+
+    /**
+     * Timed Log filename
+     *
+     * @var string
+     */
+    protected $timedFilename;
 
 
     /**
      * RotatingFileHandler constructor
      *
-     * @param $filename
+     * @param string $filename
      * @param int $maxFiles
+     * @throws Exception
      */
-    public function __construct($filename, $maxFiles = 0)
+    public function __construct(string $filename, int $maxFiles = 0)
     {
+        $this->maxFiles = $maxFiles;
         $this->filename = $filename;
 
-        $this->maxFiles = (int)$maxFiles;
+        $this->getTimedFilename();
+        $this->rotate();
     }
 
     /**
@@ -70,8 +79,6 @@ class RotatingFileHandler implements HandlerInterface
      */
     public function handle(array $record): bool
     {
-        $this->rotate();
-
         return $this->write($record);
     }
 
@@ -91,7 +98,25 @@ class RotatingFileHandler implements HandlerInterface
 
         $data .= trim(implode('', $record['context']), "\n") . "\n\n";
 
-        return file_put_contents($this->getTimedFilename(), $data, FILE_APPEND) !== false;
+        return file_put_contents($this->timedFilename, $data, FILE_APPEND) !== false;
+    }
+
+    /**
+     * Get timed filename
+     */
+    protected function getTimedFilename(): void
+    {
+        $date = (new DateTime('now'))->format($this->dateFormat);
+
+        $filename = str_replace('.log', '', basename($this->filename));
+
+        $this->timedFilename = strtr(
+            dirname($this->filename) . '/' . $this->filenameFormat,
+            [
+                '{filename}' => $filename,
+                '{date}' => $date,
+            ]
+        );
     }
 
     /**
@@ -101,69 +126,31 @@ class RotatingFileHandler implements HandlerInterface
      */
     protected function rotate(): void
     {
-        $timedFilename = $this->getTimedFilename();
+        $filename = $this->timedFilename;
 
-        // Check if rotation is needed
-        if (file_exists($timedFilename)) {
+        if (file_exists($filename)) {
             return;
-        }
-
-        // Check unlimited files flag
-        if ($this->maxFiles === 0) {
+        } elseif ($this->maxFiles === 0) {
             return;
+        } elseif (is_writable(dirname($filename))) {
+            touch($filename);
         }
 
-        // Touch log file
-        if (is_writable(dirname($timedFilename))) {
-            touch($timedFilename);
-        }
 
-        // Check if exists files to remove
         $logFiles = glob($this->getGlobPattern());
+
         if ($this->maxFiles >= count($logFiles)) {
             return;
         }
 
-        // Sorting the files by name to remove the older ones
-        usort(
-            $logFiles,
-            function ($a, $b) {
-                return strcmp($b, $a);
-            }
-        );
 
-        // Remove older files
+        rsort($logFiles);
+
         foreach (array_slice($logFiles, $this->maxFiles) as $file) {
-            if (is_writable($file)) {
+            if (file_exists($file)) {
                 unlink($file);
             }
         }
-    }
-
-    /**
-     * Get timed filename
-     *
-     * @return string
-     * @throws Exception
-     */
-    protected function getTimedFilename(): string
-    {
-        $time = new DateTime('now');
-
-
-        $fileInfo = pathinfo($this->filename);
-
-        $timedFilename = str_replace(
-            ['{filename}', '{date}'],
-            [$fileInfo['filename'], $time->format($this->dateFormat)],
-            $fileInfo['dirname'] . '/' . $this->filenameFormat
-        );
-
-        if (!empty($fileInfo['extension'])) {
-            $timedFilename .= '.' . $fileInfo['extension'];
-        }
-
-        return $timedFilename;
     }
 
     /**
@@ -173,18 +160,10 @@ class RotatingFileHandler implements HandlerInterface
      */
     protected function getGlobPattern(): string
     {
-        $fileInfo = pathinfo($this->filename);
+        $date = (new DateTime('now'))->format($this->dateFormat);
 
-        $glob = str_replace(
-            ['{filename}', '{date}'],
-            [$fileInfo['filename'], '*'],
-            $fileInfo['dirname'] . '/' . $this->filenameFormat
-        );
+        $filename = str_replace([$date, '.log'], '', $this->timedFilename);
 
-        if (!empty($fileInfo['extension'])) {
-            $glob .= '.' . $fileInfo['extension'];
-        }
-
-        return $glob;
+        return $filename . '*.log';
     }
 }

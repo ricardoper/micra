@@ -6,7 +6,7 @@ namespace App\Commands;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class HelloCommand extends Command
+class HelloCommand extends CommandAbstract
 {
 
     /**

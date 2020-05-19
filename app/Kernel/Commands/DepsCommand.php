@@ -207,7 +207,7 @@ class DepsCommand extends Command
     }
 
     /**
-     * Verify If Shell Command Exists In The System
+     * Verify If Shell CommandAbstract Exists In The System
      *
      * @param string $cmd
      * @return bool
