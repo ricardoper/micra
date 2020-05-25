@@ -53,7 +53,7 @@ class AddressesCommand extends CommandAbstract
 
 
         if ($sleep = $input->getOption('pdo')) {
-            $output->writeln('<fg=blue>With native PDO.../fg=blue>');
+            $output->writeln('<fg=yellow>With native PDO...</fg=yellow>');
             $data = $this->pdo();
         } else {
             $data = $this->list();
