@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Commands;
+namespace App\Commands\Demo;
 
+use App\Kernel\Abstracts\CommandAbstract;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -118,15 +119,19 @@ class ExampleCommand extends CommandAbstract
 
         $output->write("\n * Container Example: ");
         dump(container('configs')->get('app.name'));
+        dump($this->getContainer('configs')->get('app.name'));
 
         $output->write(" * Service Provider Example: ");
         dump(container('example')->capitalize('name'));
+        dump($this->getService('example')->capitalize('name'));
 
         $output->write(' * Configs Example: ');
         dump(configs('app.timezone'));
+        dump($this->getConfigs('app.timezone'));
 
         $output->write(' * App Env Example 1: ');
         dump(app()->getEnv());
+        dump($this->getApp()->getEnv());
 
         $output->write(' * App Env Example 2: ');
         dump(configs('app.env'));

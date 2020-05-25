@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use App\Commands\ExampleCommand;
+use App\Commands\Demo\ExampleCommand;
 
 return [
 
@@ -10,6 +10,6 @@ return [
     | Autoloaded Console Commands
     |--------------------------------------------------------------------------
     */
-    // ExampleCommand::class,
+    // 'example' => ExampleCommand::class,
 
 ];

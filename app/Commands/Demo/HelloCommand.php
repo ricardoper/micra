@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Commands;
+namespace App\Commands\Demo;
 
+use App\Kernel\Abstracts\CommandAbstract;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

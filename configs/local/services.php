@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use App\Services\Example\ExampleServiceProvider;
+use App\Services\Demo\Example\ExampleServiceProvider;
 
 return [
 
@@ -10,6 +10,6 @@ return [
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     */
-    ExampleServiceProvider::class,
+    'example' => ExampleServiceProvider::class,
 
 ];

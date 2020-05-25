@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Services\Example;
+namespace App\Services\Demo\Example;
 
 class Example
 {

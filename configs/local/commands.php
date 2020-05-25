@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use App\Commands\ExampleCommand;
-use App\Commands\HelloCommand;
+use App\Commands\Demo\AddressesCommand;
+use App\Commands\Demo\ExampleCommand;
+use App\Commands\Demo\HelloCommand;
 
 return [
 
@@ -11,7 +12,10 @@ return [
     | Autoloaded Console Commands
     |--------------------------------------------------------------------------
     */
-    HelloCommand::class,
-    ExampleCommand::class,
+    'hello' => HelloCommand::class,
+
+    'example' => ExampleCommand::class,
+
+    'addresses' => AddressesCommand::class,
 
 ];
