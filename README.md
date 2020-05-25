@@ -36,8 +36,6 @@
 - [Database Support](#database-support)
 - [Exceptions](#exceptions)
 - [Logging](#logging)
-- [Debugging](#debugging)
-- [Demo](#demo)
 - [Benchmarks](#benchmarks)
 
 ---
@@ -396,9 +394,9 @@ Logging is always enabled and you can see all the output in `/storage/logs/app-[
 
 **NOTE**: Logs will with more than 7 days will be deleted automatically by the Logger.
 
-## Benchmarks for Hello Command
+## Benchmarks
 
-Some numbers...
+Some numbers for Hello Command...
 
 **Machine:**<br/>
 Intel® Core™ i5-8400 CPU @ 2.80GHz × 6<br>
